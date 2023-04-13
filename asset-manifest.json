@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/your-life-in/static/css/main.eb0107ba.css",
-    "main.js": "/your-life-in/static/js/main.dde88aaf.js",
+    "main.js": "/your-life-in/static/js/main.ce68e39e.js",
     "index.html": "/your-life-in/index.html",
     "main.eb0107ba.css.map": "/your-life-in/static/css/main.eb0107ba.css.map",
-    "main.dde88aaf.js.map": "/your-life-in/static/js/main.dde88aaf.js.map"
+    "main.ce68e39e.js.map": "/your-life-in/static/js/main.ce68e39e.js.map"
   },
   "entrypoints": [
     "static/css/main.eb0107ba.css",
-    "static/js/main.dde88aaf.js"
+    "static/js/main.ce68e39e.js"
   ]
 }
