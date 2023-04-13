@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/your-life-in/static/css/main.eb0107ba.css",
+    "main.js": "/your-life-in/static/js/main.62a22111.js",
+    "index.html": "/your-life-in/index.html",
+    "main.eb0107ba.css.map": "/your-life-in/static/css/main.eb0107ba.css.map",
+    "main.62a22111.js.map": "/your-life-in/static/js/main.62a22111.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.eb0107ba.css",
+    "static/js/main.62a22111.js"
+  ]
+}
