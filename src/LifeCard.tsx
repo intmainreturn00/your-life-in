@@ -4,7 +4,7 @@ import { Draw, NormalDraw, RoughDraw } from "./drawings";
 import { calculateBoard } from "./board";
 
 export type Scale = "WEEKS" | "MONTHS" | "YEARS";
-export type DrawType = "OK" | "FUNKY";
+export type DrawStyle = "OK" | "FUNKY";
 
 export type Interval = {
   A: Date;
@@ -37,10 +37,19 @@ export type LifeProps = {
   canvasSizePx: Size;
   strokeColor: string;
   style?: React.CSSProperties;
-  drawStyle: DrawType;
+  drawStyle: DrawStyle;
 };
 
-export default function LifeCard({ startDate, yearsToShow, scale, intervals, canvasSizePx, style, strokeColor, drawStyle }: LifeProps) {
+export default function LifeCard({
+  startDate,
+  yearsToShow,
+  scale,
+  intervals,
+  canvasSizePx,
+  style,
+  strokeColor,
+  drawStyle,
+}: LifeProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ctxRef = React.useRef<CanvasRenderingContext2D | null>(null);
   const normalDraw = useMemo(() => new NormalDraw(), []);
@@ -62,23 +71,22 @@ export default function LifeCard({ startDate, yearsToShow, scale, intervals, can
         let requestId: number;
         let i = 0;
 
-        const render = () => {
+        const render = (i: number) => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           unitIntervals.forEach((interval) => {
-            draw.drawInterval(canvas, ctx, board, interval);
+            draw.drawInterval(canvas, ctx, board, interval, i);
           });
           for (let unit = 0; unit < board.row * board.column; ++unit) {
-            draw.strokeUnit(canvas, ctx, board, unit, strokeColor);
+            draw.strokeUnit(canvas, ctx, board, unit, strokeColor, i);
           }
-          //const nowUnit = board.dateToUnit(new Date());
           i += 0.05;
-          // requestId = requestAnimationFrame(render);
+          requestId = requestAnimationFrame(render);
         };
 
-        render();
-        // return () => {
-        //   cancelAnimationFrame(requestId);
-        // };
+        render(i);
+        return () => {
+          cancelAnimationFrame(requestId);
+        };
       }
     }
   }, [startDate, yearsToShow, scale, canvasSizePx, intervals, strokeColor, drawStyle, normalDraw, roughDraw]);

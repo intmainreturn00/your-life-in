@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSpring, animated } from "@react-spring/web";
 import { useDrag, usePinch } from "@use-gesture/react";
-import LifeCard, { DrawType, Scale, Size } from "./LifeCard";
+import LifeCard, { DrawStyle, Scale, Size } from "./LifeCard";
 import isMobile from "./isMobile";
 import styled from "styled-components";
 import { datasets } from "./dataset";
@@ -36,7 +36,6 @@ export default function App() {
       } else {
         setScale("YEARS");
       }
-
       // api.start({ scale: s });
       // if (active) {
       //   api.start({ scale: s });
@@ -45,7 +44,7 @@ export default function App() {
       //   // cancel();
       // }
     },
-    { scaleBounds: { min: 1, max: 2.7 }, rubberband: true }
+    { scaleBounds: { min: 1, max: 2.9 }, rubberband: true }
   );
   //
   const startDate = datasets.myBirthday;
@@ -54,10 +53,24 @@ export default function App() {
   const windowSize = useWindowSize();
   const getCanvasSize = () => {
     document.documentElement.style.setProperty("--doc-height", `${window.innerHeight}px`);
-    const xEdge = 0.95 * Math.min(windowSize.dx, windowSize.dy);
-    return { dx: xEdge, dy: xEdge };
+    if (!isMobile()) {
+      const xEdge = 0.4 * Math.min(windowSize.dx, windowSize.dy);
+      const xEdge2 = 0.8 * Math.min(windowSize.dx, windowSize.dy);
+      if (scale === "YEARS") {
+        return { dx: xEdge, dy: xEdge };
+      } else {
+        return { dx: xEdge2, dy: xEdge2 };
+      }
+    } else {
+      const xEdge = 0.95 * Math.min(windowSize.dx, windowSize.dy);
+      if (scale === "YEARS") {
+        return { dx: xEdge, dy: xEdge };
+      } else {
+        return { dx: windowSize.dx, dy: windowSize.dy };
+      }
+    }
   };
-  const [drawStyle, setDrawStyle] = useState<DrawType>("OK");
+  const [drawStyle, setDrawStyle] = useState<DrawStyle>("OK");
   const handleDrawStyleChange = () => {
     if (drawStyle === "OK") {
       setDrawStyle("FUNKY");
@@ -68,7 +81,7 @@ export default function App() {
 
   const handleYearsToShowChange = () => {
     if (yearsToShow === 90) {
-      setYearsToShow(35);
+      setYearsToShow(45);
     } else {
       setYearsToShow(90);
     }
@@ -82,7 +95,7 @@ export default function App() {
             startDate={startDate}
             yearsToShow={yearsToShow}
             scale={scale}
-            intervals={scale === "YEARS" ? datasets.allMyLife : datasets.authoring}
+            intervals={scale === "YEARS" ? datasets.authoring : datasets.authoring}
             canvasSizePx={getCanvasSize()}
             strokeColor={colors.stroke}
             style={{}}
@@ -90,21 +103,22 @@ export default function App() {
           />
         </LifeContainer>
       </animated.div>
-      <Title canvasSize={getCanvasSize()}>
-        A{" "}
+      <Title canvasSize={getCanvasSize()} drawStyle={drawStyle}>
+        A
         <ScaleButton isActive={true} isMobile={isMobile()} onClick={handleYearsToShowChange}>
           {yearsToShow}
         </ScaleButton>
-        -Year Life in{" "}
+        -Year Life in [
         <ScaleButton isActive={scale === "YEARS"} isMobile={isMobile()} onClick={() => setScale("YEARS")}>
-          {"[yrs"}
+          {"yrs,"}
         </ScaleButton>
         <ScaleButton isActive={scale === "MONTHS"} isMobile={isMobile()} onClick={() => setScale("MONTHS")}>
-          {"|mos"}
+          {"mos,"}
         </ScaleButton>
         <ScaleButton isActive={scale === "WEEKS"} isMobile={isMobile()} onClick={() => setScale("WEEKS")}>
-          {"|wks]"}
+          {"wks"}
         </ScaleButton>
+        ]
       </Title>
     </Container>
   );
@@ -121,27 +135,26 @@ const Container = styled.div<{ isMobile: boolean }>`
   background-color: ${colors.background};
 `;
 
-const Title = styled.text<{ canvasSize: Size }>`
+const Title = styled.text<{ canvasSize: Size; drawStyle: DrawStyle }>`
   ${noselect}
+  font-family: ${(props) =>
+    props.drawStyle === "FUNKY" ? `'Rubik Pixels', cursive;` : `'Sedgwick Ave Display', cursive;`};
   font-weight: bolder;
-  font-size: larger;
+  font-size: ${(props) => (props.drawStyle === "FUNKY" ? "medium" : "large")};
   position: absolute;
-  top: 24px;
-  padding: 8px;
+  bottom: 24px;
+  /* padding: 8px; */
   left: ${(props) => (window.innerWidth - props.canvasSize.dx) / 2};
   right: ${(props) => (window.innerWidth - props.canvasSize.dx) / 2};
-
   cursor: pointer;
   color: ${colors.p};
   text-align: center;
-
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 `;
 
 const ScaleButton = styled.text<{ isMobile: boolean; isActive: boolean }>`
-  font-weight: bolder;
+  /* font-weight: bolder; */
   /* font-size: larger; */
+  padding: 2px;
   color: ${colors.buttonText};
   background: ${(props) => (props.isActive ? colors.button : "transparent")};
   &:hover {
@@ -154,9 +167,14 @@ const ScaleButton = styled.text<{ isMobile: boolean; isActive: boolean }>`
 
 const LifeContainer = styled.div`
   ${noselect}
-  /* display: flex; */
-  /* flex: 1; */
   /* min-width: 300px; */
+  /* display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; */
   margin-top: 24px;
   /* background-color: ${colors.button}; */
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 `;

@@ -12,14 +12,22 @@ export type Board = {
   dateToUnit: (d: Date) => number;
   unitCenter: (unitNumber: number) => Point;
   intervalToUnits: (intervals: Array<Interval>) => Array<UnitInterval>;
+  animSize: (i: number) => Size;
+  animPct: (pct: number, i: number) => number;
 };
 
 export const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scale, canvasSizePx: Size) => {
   const row = scale === "YEARS" ? 10 : scale === "MONTHS" ? 12 : 52;
   const column = scale === "YEARS" ? yearsToShow / 10 : yearsToShow;
   const unitSize: Size = {
-    dx: scale === "YEARS" ? Math.min(canvasSizePx.dx, canvasSizePx.dy) / Math.max(row, column) : canvasSizePx.dx / row,
-    dy: scale === "YEARS" ? Math.min(canvasSizePx.dx, canvasSizePx.dy) / Math.max(row, column) : canvasSizePx.dy / column,
+    dx:
+      scale === "YEARS"
+        ? Math.min(canvasSizePx.dx, canvasSizePx.dy) / Math.max(row, column)
+        : (canvasSizePx.dx - 5) / row,
+    dy:
+      scale === "YEARS"
+        ? Math.min(canvasSizePx.dx, canvasSizePx.dy) / Math.max(row, column)
+        : (canvasSizePx.dy - 5) / column,
   };
   const diff: (d1: Date, d2: Date) => number = scale === "YEARS" ? years : scale === "MONTHS" ? months : weeks;
   const dateToUnit = (d: Date) => {
@@ -52,6 +60,15 @@ export const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scal
     });
     return res;
   };
+  const animSize = (i: number) => {
+    // const anim = Math.min(1.1, Math.cos(i / 250));
+    const anim = Math.max(0.9, 1.2 * Math.sin(i / 300));
+    // const anim = Math.max(1, 1.2 * Math.sin(i / 150));
+    return board.scaledSize(unitSize, anim, anim);
+  };
+  const animPct = (pct: number, i: number) => {
+    return 0.9 * pct * Math.abs(Math.sin(i / 500));
+  };
   const board: Board = {
     startDate: startDate,
     yearsToShow: yearsToShow,
@@ -63,6 +80,8 @@ export const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scal
     dateToUnit: dateToUnit,
     unitCenter: unitCenter,
     intervalToUnits: intervalToUnits,
+    animSize: animSize,
+    animPct: animPct,
   };
   return board;
 };

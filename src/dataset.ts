@@ -7,7 +7,7 @@ const allMyLife: Array<Interval> = [
   {
     A: myBirthday,
     B: new Date(),
-    color: colors.tertiery,
+    color: colors.button,
     title: "Life",
   },
 ];
@@ -34,7 +34,7 @@ const authoring: Array<Interval> = [
   {
     A: new Date(2016, 5, 1),
     B: new Date(2018, 5, 1),
-    color: colors.highlight,
+    color: colors.color4,
     title: "Arrival",
   },
   {
@@ -46,7 +46,7 @@ const authoring: Array<Interval> = [
   {
     A: new Date(2019, 8, 1),
     B: new Date(2022, 5, 1),
-    color: colors.highlight,
+    color: colors.color4,
     title: "Sweat",
   },
   {

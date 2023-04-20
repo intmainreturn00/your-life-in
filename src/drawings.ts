@@ -5,14 +5,23 @@ import { RoughCanvas } from "roughjs/bin/canvas";
 import rough from "roughjs/bin/rough";
 import { Config, Drawable } from "roughjs/bin/core";
 import { Point } from "roughjs/bin/geometry";
+import colors from "./colors";
 
 type HTMLCanvas = HTMLCanvasElement;
 type CanvasContext = CanvasRenderingContext2D;
 export interface Draw {
   initCanvas: (canvas: HTMLCanvas, ctx: CanvasContext, board: Board, canvasSizePx: Size, strokeColor: string) => void;
-  strokeUnit: (canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string) => void;
-  fillUnit: (canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string, from: number, to: number) => void;
-  drawInterval: (canvas: HTMLCanvas, ctx: CanvasContext, board: Board, interval: UnitInterval) => void;
+  strokeUnit: (canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string, i: number) => void;
+  fillUnit: (
+    canvas: HTMLCanvas,
+    ctx: CanvasContext,
+    board: Board,
+    unit: number,
+    color: string,
+    from: number,
+    to: number
+  ) => void;
+  drawInterval: (canvas: HTMLCanvas, ctx: CanvasContext, board: Board, interval: UnitInterval, i: number) => void;
 }
 export class NormalDraw {
   initCanvas(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, canvasSizePx: Size, strokeColor: string) {
@@ -20,19 +29,53 @@ export class NormalDraw {
     retinaCanvasScaling(canvas, ctx, canvasSizePx);
     ctx.lineWidth = lineWidth;
   }
-  strokeUnit(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string) {
+  strokeUnit(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string, i: number) {
     ctx.strokeStyle = color;
     const center = board.unitCenter(unit);
     const size = board.scaledSize(board.unitSize, 0.9, 0.9);
-    ctx.strokeRect(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy);
+    const nowUnit = board.dateToUnit(new Date());
+    const animSize = board.animSize(i);
+    if (unit === nowUnit) {
+      // ctx.strokeRect(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy);
+      ctx.strokeRect(center.x - animSize.dx / 2, center.y - animSize.dy / 2, animSize.dx, animSize.dy);
+    } else {
+      ctx.strokeRect(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy);
+    }
   }
-  fillUnit(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string, from: number, to: number) {
+  fillUnit(
+    canvas: HTMLCanvas,
+    ctx: CanvasContext,
+    board: Board,
+    unit: number,
+    color: string,
+    from: number,
+    to: number,
+    i: number
+  ) {
     ctx.fillStyle = color;
     const center = board.unitCenter(unit);
-    const size = board.scaledSize(board.unitSize, 0.9, 0.9);
-    ctx.fillRect(center.x - size.dx / 2 + from * size.dx, center.y - size.dy / 2, size.dx * (to - from), size.dy);
+    const size = board.scaledSize(board.unitSize, 1, 1);
+    const nowUnit = board.dateToUnit(new Date());
+    const animSize = board.animSize(i);
+    if (unit === nowUnit) {
+      ctx.fillRect(
+        center.x - animSize.dx / 2 + from * animSize.dx,
+        center.y - animSize.dy / 2,
+        animSize.dx * (to - from),
+        animSize.dy
+      );
+      ctx.fillStyle = colors.background;
+      ctx.fillRect(
+        center.x - animSize.dx / 2 + to * animSize.dx,
+        center.y - animSize.dy / 2,
+        animSize.dx * (1 - to),
+        animSize.dy
+      );
+    } else {
+      ctx.fillRect(center.x - size.dx / 2 + from * size.dx, center.y - size.dy / 2, size.dx * (to - from), size.dy);
+    }
   }
-  drawInterval(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, interval: UnitInterval) {
+  drawInterval(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, interval: UnitInterval, i: number) {
     for (let unit = interval.A; unit <= interval.B; ++unit) {
       this.fillUnit(
         canvas,
@@ -41,7 +84,8 @@ export class NormalDraw {
         unit,
         interval.color,
         unit === interval.A ? interval.from : 0,
-        unit === interval.B ? interval.to : 1
+        unit === interval.B ? interval.to : 1,
+        i
       );
     }
   }
@@ -71,7 +115,15 @@ export class DiamondDraw {
     ctx.closePath();
     ctx.stroke();
   }
-  fillUnit(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string, from: number, to: number) {
+  fillUnit(
+    canvas: HTMLCanvas,
+    ctx: CanvasContext,
+    board: Board,
+    unit: number,
+    color: string,
+    from: number,
+    to: number
+  ) {
     ctx.fillStyle = color;
     const center = board.unitCenter(unit);
     const size = board.scaledSize(board.unitSize, 0.9, 0.9);
@@ -122,19 +174,16 @@ export class RoughDraw {
   intervalsDrawables: Map<UnitInterval, Drawable> = new Map();
 
   initCanvas(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, canvasSizePx: Size, strokeColor: string) {
-    const lineWidth = board.scale === "YEARS" ? 0.2 : 0.2;
+    const lineWidth = board.scale === "YEARS" ? 1 : 0.2;
     retinaCanvasScaling(canvas, ctx, canvasSizePx);
     ctx.lineWidth = lineWidth;
     this.config = {
       options: {
-        roughness: 1,
-        bowing: 1,
-        fillWeight: 2,
+        roughness: 2,
+        bowing: 2,
+        fillWeight: 4,
         strokeWidth: lineWidth,
         seed: Math.floor(Math.random() * 100),
-        stroke: strokeColor,
-        fillStyle: "cross-hatch",
-        hachureAngle: 90,
       },
     };
     const rc = rough.canvas(canvas, this.config);
@@ -146,21 +195,52 @@ export class RoughDraw {
       this.grid.push(rc.generator.rectangle(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy));
     }
   }
-  strokeUnit(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string) {
+  strokeUnit(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string, i: number) {
     const rc: RoughCanvas = rough.canvas(canvas, this.config);
-    rc.draw(this.grid[unit]);
+    const nowUnit = board.dateToUnit(new Date());
+    if (unit !== nowUnit) {
+      rc.draw(this.grid[unit]);
+    }
   }
-  fillUnit(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string, from: number, to: number) {
+  fillUnit(
+    canvas: HTMLCanvas,
+    ctx: CanvasContext,
+    board: Board,
+    unit: number,
+    color: string,
+    from: number,
+    to: number,
+    i: number
+  ) {
+    const rc: RoughCanvas = rough.canvas(canvas, this.config);
     const center = board.unitCenter(unit);
     const size = board.scaledSize(board.unitSize, 0.9, 0.9);
-    const rc: RoughCanvas = rough.canvas(canvas, this.config);
-    rc.draw(
-      rc.rectangle(center.x - size.dx / 2 + from * size.dx, center.y - size.dy / 2, size.dx * (to - from), size.dy, {
-        fill: color,
-      })
-    );
+    const nowUnit = board.dateToUnit(new Date());
+    if (unit === nowUnit) {
+      rc.draw(
+        rc.rectangle(
+          center.x - size.dx / 2 /*+ from * animSize.dx*/,
+          center.y - size.dy / 2,
+          size.dx * (to - from),
+          size.dy,
+          {
+            fill: color,
+            fillWeight: board.scale === "YEARS" ? 2 : 1,
+            fillStyle: "solid",
+            hachureAngle: -45,
+            strokeWidth: board.scale === "YEARS" ? 2 : 0.5,
+          }
+        )
+      );
+    } else {
+      rc.draw(
+        rc.rectangle(center.x - size.dx / 2 + from * size.dx, center.y - size.dy / 2, size.dx * (to - from), size.dy, {
+          fill: color,
+        })
+      );
+    }
   }
-  drawInterval(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, interval: UnitInterval) {
+  drawInterval(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, interval: UnitInterval, i: number) {
     const rc: RoughCanvas = rough.canvas(canvas, this.config);
     let drawable = this.intervalsDrawables.get(interval);
     if (drawable === undefined) {
@@ -187,11 +267,23 @@ export class RoughDraw {
       }
       drawable = rc.generator.polygon(path, {
         fill: interval.color,
+        fillWeight: board.scale === "YEARS" ? 4 : 1,
+        fillStyle: "zigzag",
+        hachureAngle: -45,
+        strokeWidth: board.scale === "YEARS" ? 2 : 0.5,
       });
       this.intervalsDrawables.set(interval, drawable);
       rc.draw(drawable);
     } else {
       rc.draw(drawable);
+    }
+    const nowUnit = board.dateToUnit(new Date());
+    const centerNow = board.unitCenter(nowUnit);
+    const size = board.scaledSize(board.unitSize, 1, 1);
+    if (nowUnit > interval.A && nowUnit <= interval.B) {
+      ctx.fillStyle = colors.background;
+      ctx.fillRect(centerNow.x - size.dx / 2, centerNow.y - size.dy / 2, size.dx, size.dy);
+      this.fillUnit(canvas, ctx, board, nowUnit, interval.color, 0, board.animPct(interval.to, i), i);
     }
   }
 }
