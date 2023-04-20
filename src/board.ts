@@ -1,4 +1,4 @@
-import { Interval, Point, Scale, Size, UnitInterval } from "./LifeBoard";
+import { Interval, Point, Scale, Size, UnitInterval } from "./LifeCard";
 import { startOfTheYear, weeks, months, years } from "./timeUtils";
 
 export type Board = {
@@ -14,10 +14,13 @@ export type Board = {
   intervalToUnits: (intervals: Array<Interval>) => Array<UnitInterval>;
 };
 
-const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scale, canvasSizePx: Size) => {
+export const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scale, canvasSizePx: Size) => {
   const row = scale === "YEARS" ? 10 : scale === "MONTHS" ? 12 : 52;
   const column = scale === "YEARS" ? yearsToShow / 10 : yearsToShow;
-  const unitSize: Size = { dx: canvasSizePx.dx / row, dy: canvasSizePx.dy / column };
+  const unitSize: Size = {
+    dx: scale === "YEARS" ? Math.min(canvasSizePx.dx, canvasSizePx.dy) / Math.max(row, column) : canvasSizePx.dx / row,
+    dy: scale === "YEARS" ? Math.min(canvasSizePx.dx, canvasSizePx.dy) / Math.max(row, column) : canvasSizePx.dy / column,
+  };
   const diff: (d1: Date, d2: Date) => number = scale === "YEARS" ? years : scale === "MONTHS" ? months : weeks;
   const dateToUnit = (d: Date) => {
     return Math.floor(diff(startOfTheYear(startDate), d));
@@ -49,7 +52,17 @@ const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scale, canv
     });
     return res;
   };
-  return { startDate, yearsToShow, scale, row, column, unitSize, scaledSize, dateToUnit, unitCenter, intervalToUnits } as Board;
+  const board: Board = {
+    startDate: startDate,
+    yearsToShow: yearsToShow,
+    scale: scale,
+    row: row,
+    column: column,
+    unitSize: unitSize,
+    scaledSize: scaledSize,
+    dateToUnit: dateToUnit,
+    unitCenter: unitCenter,
+    intervalToUnits: intervalToUnits,
+  };
+  return board;
 };
-
-export default calculateBoard;

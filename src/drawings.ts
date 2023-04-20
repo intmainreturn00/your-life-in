@@ -1,4 +1,4 @@
-import { Size, UnitInterval } from "./LifeBoard";
+import { Size, UnitInterval } from "./LifeCard";
 import retinaCanvasScaling from "./retinaCanvasScaling";
 import { Board } from "./board";
 import { RoughCanvas } from "roughjs/bin/canvas";
@@ -122,13 +122,14 @@ export class RoughDraw {
   intervalsDrawables: Map<UnitInterval, Drawable> = new Map();
 
   initCanvas(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, canvasSizePx: Size, strokeColor: string) {
-    const lineWidth = board.scale === "YEARS" ? 1.5 : 0.1;
+    const lineWidth = board.scale === "YEARS" ? 0.2 : 0.2;
     retinaCanvasScaling(canvas, ctx, canvasSizePx);
     ctx.lineWidth = lineWidth;
     this.config = {
       options: {
         roughness: 1,
-        bowing: 2,
+        bowing: 1,
+        fillWeight: 2,
         strokeWidth: lineWidth,
         seed: Math.floor(Math.random() * 100),
         stroke: strokeColor,
@@ -138,6 +139,7 @@ export class RoughDraw {
     };
     const rc = rough.canvas(canvas, this.config);
     this.grid = [];
+    this.intervalsDrawables = new Map();
     for (let unit = 0; unit < board.row * board.column; ++unit) {
       const center = board.unitCenter(unit);
       const size = board.scaledSize(board.unitSize, 0.9, 0.9);
@@ -176,17 +178,18 @@ export class RoughDraw {
         // multi-line shape
         path.push([centerA.x - size.dx / 2 + interval.from * size.dx, centerA.y + size.dy / 2]);
         path.push([centerA.x - size.dx / 2 + interval.from * size.dx, centerA.y - size.dy / 2]);
-        path.push([size.dx * board.row + size.dx, centerA.y - size.dy / 2]);
-        path.push([size.dx * board.row + size.dx, centerB.y - size.dy / 2]);
+        path.push([size.dx * board.row - 1, centerA.y - size.dy / 2]);
+        path.push([size.dx * board.row - 1, centerB.y - size.dy / 2]);
         path.push([centerB.x - size.dx / 2 + interval.to * size.dx, centerB.y - size.dy / 2]);
         path.push([centerB.x - size.dx / 2 + interval.to * size.dx, centerB.y + size.dy / 2]);
-        path.push([0, centerB.y + size.dy / 2]);
-        path.push([0, centerA.y + size.dy / 2]);
+        path.push([1, centerB.y + size.dy / 2]);
+        path.push([1, centerA.y + size.dy / 2]);
       }
       drawable = rc.generator.polygon(path, {
         fill: interval.color,
       });
       this.intervalsDrawables.set(interval, drawable);
+      rc.draw(drawable);
     } else {
       rc.draw(drawable);
     }

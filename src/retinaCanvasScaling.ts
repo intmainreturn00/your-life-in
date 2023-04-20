@@ -1,4 +1,4 @@
-import { Size } from "./LifeBoard";
+import { Size } from "./LifeCard";
 
 const retinaCanvasScaling = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, canvasSizePx: Size) => {
   canvas.style.width = `${canvasSizePx.dx}px`;
