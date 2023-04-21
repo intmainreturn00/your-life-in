@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSpring, animated } from "@react-spring/web";
-import { useDrag, usePinch } from "@use-gesture/react";
+import { usePinch } from "@use-gesture/react";
 import LifeCard, { DrawStyle, Scale, Size } from "./LifeCard";
 import isMobile from "./isMobile";
 import styled from "styled-components";
@@ -8,13 +8,15 @@ import { datasets } from "./dataset";
 import { noselect } from "./noselect";
 import { useWindowSize } from "./useWindowSize";
 import colors from "./colors";
-import { createUseGesture, dragAction, pinchAction } from "@use-gesture/react";
-
-const useGesture = createUseGesture([pinchAction]);
 
 export default function App() {
+  const target = useRef(null);
+
   useEffect(() => {
-    const handler = (e: Event) => e.preventDefault();
+    // enabling proper pinch to zoom
+    const handler = (e: Event) => {
+      e.preventDefault();
+    };
     document.addEventListener("gesturestart", handler);
     document.addEventListener("gesturechange", handler);
     document.addEventListener("gestureend", handler);
@@ -24,11 +26,17 @@ export default function App() {
       document.removeEventListener("gestureend", handler);
     };
   }, []);
+
   const [style, api] = useSpring(() => ({
     scale: 1,
   }));
   const bind = usePinch(
     ({ last, down, active, canceled, origin: [ox, oy], first, movement: [ms], offset: [s, a], cancel, memo }) => {
+      if (first) {
+        const initialScale = style.scale.get();
+        memo = [initialScale];
+      }
+
       if (s > 2.666) {
         setScale("WEEKS");
       } else if (s > 1.666) {
@@ -36,17 +44,23 @@ export default function App() {
       } else {
         setScale("YEARS");
       }
-      // api.start({ scale: s });
-      // if (active) {
-      //   api.start({ scale: s });
-      // } else {
-      //   api.start({ scale: 1 });
-      //   // cancel();
-      // }
+
+      //
+      if (active) {
+        api.start({ scale: memo[0] * ms });
+      } else {
+        api.start({ scale: 1 });
+      }
+      return memo;
     },
-    { scaleBounds: { min: 1, max: 2.9 }, rubberband: true }
+    {
+      scaleBounds: { min: 1, max: 2.9 },
+      rubberband: true,
+      pointer: { touch: true },
+      eventOptions: { passive: false },
+    }
   );
-  //
+
   const startDate = datasets.myBirthday;
   const [yearsToShow, setYearsToShow] = useState<number>(90);
   const [scale, setScale] = useState<Scale>("YEARS");
@@ -81,12 +95,11 @@ export default function App() {
 
   const handleYearsToShowChange = () => {
     if (yearsToShow === 90) {
-      setYearsToShow(45);
+      setYearsToShow(60);
     } else {
       setYearsToShow(90);
     }
   };
-  //"WEEKS" | "MONTHS" | "YEARS";
   return (
     <Container isMobile={isMobile()}>
       <animated.div {...bind()} style={style}>
@@ -138,12 +151,11 @@ const Container = styled.div<{ isMobile: boolean }>`
 const Title = styled.text<{ canvasSize: Size; drawStyle: DrawStyle }>`
   ${noselect}
   font-family: ${(props) =>
-    props.drawStyle === "FUNKY" ? `'Rubik Pixels', cursive;` : `'Sedgwick Ave Display', cursive;`};
+    props.drawStyle === "FUNKY" ? `'Sedgwick Ave Display', cursive;` : `'Nova Oval', cursive;`};
   font-weight: bolder;
-  font-size: ${(props) => (props.drawStyle === "FUNKY" ? "medium" : "large")};
+  font-size: ${(props) => (props.drawStyle === "FUNKY" ? "larger" : "large")};
   position: absolute;
   bottom: 24px;
-  /* padding: 8px; */
   left: ${(props) => (window.innerWidth - props.canvasSize.dx) / 2};
   right: ${(props) => (window.innerWidth - props.canvasSize.dx) / 2};
   cursor: pointer;

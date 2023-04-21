@@ -61,8 +61,8 @@ export const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scal
     return res;
   };
   const animSize = (i: number) => {
-    // const anim = Math.min(1.1, Math.cos(i / 250));
-    const anim = Math.max(0.9, 1.2 * Math.sin(i / 300));
+    const anim = Math.min(1.1, Math.sin(i / 500));
+    // const anim = Math.max(0.9, 1.2 * Math.sin(i / 300));
     // const anim = Math.max(1, 1.2 * Math.sin(i / 150));
     return board.scaledSize(unitSize, anim, anim);
   };

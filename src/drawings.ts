@@ -11,6 +11,7 @@ type HTMLCanvas = HTMLCanvasElement;
 type CanvasContext = CanvasRenderingContext2D;
 export interface Draw {
   initCanvas: (canvas: HTMLCanvas, ctx: CanvasContext, board: Board, canvasSizePx: Size, strokeColor: string) => void;
+  drawGrid: (canvas: HTMLCanvas, ctx: CanvasContext, board: Board, strokeColor: string) => void;
   strokeUnit: (canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string, i: number) => void;
   fillUnit: (
     canvas: HTMLCanvas,
@@ -36,11 +37,23 @@ export class NormalDraw {
     const nowUnit = board.dateToUnit(new Date());
     const animSize = board.animSize(i);
     if (unit === nowUnit) {
-      // ctx.strokeRect(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy);
       ctx.strokeRect(center.x - animSize.dx / 2, center.y - animSize.dy / 2, animSize.dx, animSize.dy);
     } else {
       ctx.strokeRect(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy);
     }
+  }
+  drawGrid(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, strokeColor: string) {
+    ctx.strokeStyle = strokeColor;
+    const size = board.scaledSize(board.unitSize, 1, 1);
+    for (let unit = 0; unit < board.row + 1; ++unit) {
+      ctx.moveTo(size.dx * unit, 0);
+      ctx.lineTo(size.dx * unit, size.dy * board.column);
+    }
+    for (let unit = 0; unit < board.column + 1; ++unit) {
+      ctx.moveTo(0, size.dy * unit);
+      ctx.lineTo(size.dx * board.row, size.dy * unit);
+    }
+    ctx.stroke();
   }
   fillUnit(
     canvas: HTMLCanvas,
@@ -62,13 +75,6 @@ export class NormalDraw {
         center.x - animSize.dx / 2 + from * animSize.dx,
         center.y - animSize.dy / 2,
         animSize.dx * (to - from),
-        animSize.dy
-      );
-      ctx.fillStyle = colors.background;
-      ctx.fillRect(
-        center.x - animSize.dx / 2 + to * animSize.dx,
-        center.y - animSize.dy / 2,
-        animSize.dx * (1 - to),
         animSize.dy
       );
     } else {
@@ -179,7 +185,7 @@ export class RoughDraw {
     ctx.lineWidth = lineWidth;
     this.config = {
       options: {
-        roughness: 2,
+        roughness: 1,
         bowing: 2,
         fillWeight: 4,
         strokeWidth: lineWidth,
@@ -189,10 +195,12 @@ export class RoughDraw {
     const rc = rough.canvas(canvas, this.config);
     this.grid = [];
     this.intervalsDrawables = new Map();
-    for (let unit = 0; unit < board.row * board.column; ++unit) {
-      const center = board.unitCenter(unit);
-      const size = board.scaledSize(board.unitSize, 0.9, 0.9);
-      this.grid.push(rc.generator.rectangle(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy));
+    const size = board.scaledSize(board.unitSize, 1, 1);
+    for (let unit = 0; unit < board.row + 1; ++unit) {
+      this.grid.push(rc.line(size.dx * unit, 0, size.dx * unit, size.dy * board.column + size.dy / 2));
+    }
+    for (let unit = 0; unit < board.column + 1; ++unit) {
+      this.grid.push(rc.line(0, size.dy * unit, size.dx * board.row, size.dy * unit));
     }
   }
   strokeUnit(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string, i: number) {
@@ -201,6 +209,17 @@ export class RoughDraw {
     if (unit !== nowUnit) {
       rc.draw(this.grid[unit]);
     }
+  }
+  drawGrid(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, strokeColor: string) {
+    const rc: RoughCanvas = rough.canvas(canvas, this.config);
+    // const size = board.scaledSize(board.unitSize, 1, 1);
+    // for (let unit = 0; unit < board.row; ++unit) {
+    //   rc.draw(rc.line(size.dx * unit, 0, size.dx * unit, size.dy * board.column));
+    // }
+    // for (let unit = 0; unit < board.column + 1; ++unit) {
+    //   rc.draw(rc.line(0, size.dy * unit, size.dx * board.row, size.dy * unit));
+    // }
+    this.grid.forEach((dr) => rc.draw(dr));
   }
   fillUnit(
     canvas: HTMLCanvas,

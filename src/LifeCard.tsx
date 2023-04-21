@@ -70,19 +70,18 @@ export default function LifeCard({
         draw.initCanvas(canvas, ctx, board, canvasSizePx, strokeColor);
         let requestId: number;
         let i = 0;
-
         const render = (i: number) => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          unitIntervals.forEach((interval) => {
-            draw.drawInterval(canvas, ctx, board, interval, i);
-          });
-          for (let unit = 0; unit < board.row * board.column; ++unit) {
-            draw.strokeUnit(canvas, ctx, board, unit, strokeColor, i);
+          if (i > 500) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            unitIntervals.forEach((interval) => {
+              draw.drawInterval(canvas, ctx, board, interval, i);
+            });
+            draw.drawGrid(canvas, ctx, board, strokeColor);
+            i = 0;
           }
           i += 0.05;
           requestId = requestAnimationFrame(render);
         };
-
         render(i);
         return () => {
           cancelAnimationFrame(requestId);
