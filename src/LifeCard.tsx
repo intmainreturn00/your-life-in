@@ -56,7 +56,7 @@ export default function LifeCard({
   const roughDraw = useMemo(() => new RoughDraw(), []);
 
   useEffect(() => {
-    const board = calculateBoard(startDate, yearsToShow, scale, canvasSizePx);
+    const board = calculateBoard(startDate, yearsToShow, scale, canvasSizePx, drawStyle);
     const unitIntervals = intervals ? board.intervalToUnits(intervals) : [];
     const draw = drawStyle === "OK" ? normalDraw : roughDraw;
 
@@ -72,10 +72,17 @@ export default function LifeCard({
         let i = 0;
         const render = (i: number) => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          draw.drawGrid(canvas, ctx, board, strokeColor);
-          unitIntervals.forEach((interval) => {
-            draw.drawInterval(canvas, ctx, board, interval, i);
-          });
+          if (board.scale === "YEARS") {
+            unitIntervals.forEach((interval) => {
+              draw.drawInterval(canvas, ctx, board, interval, i);
+            });
+            draw.drawGrid(canvas, ctx, board, strokeColor);
+          } else {
+            draw.drawGrid(canvas, ctx, board, strokeColor);
+            unitIntervals.forEach((interval) => {
+              draw.drawInterval(canvas, ctx, board, interval, i);
+            });
+          }
 
           // if (i > 1000) {
 

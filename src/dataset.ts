@@ -17,13 +17,13 @@ const authoring: Array<Interval> = [
     A: new Date(1991, 11, 17),
     B: new Date(2010, 8, 1),
     color: colors.color3,
-    title: "🛖🐑🐖🐂🌾🛷🧰🥶💾👾🦮 siberia",
+    title: " 🛖🐑🐖🐂🌾🛷🧰🥶💾👾🦮 siberia",
   },
   {
     A: new Date(2010, 8, 2),
     B: new Date(2015, 2, 1),
     color: colors.color1,
-    title: "🎓👔💼  university / emc lab",
+    title: " 🎓👔💼  university / emc lab",
   },
   {
     A: new Date(2015, 2, 1),
@@ -35,25 +35,25 @@ const authoring: Array<Interval> = [
     A: new Date(2016, 5, 1),
     B: new Date(2018, 5, 1),
     color: colors.color4,
-    title: "🚛💂‍♀️ arrival",
+    title: "  🚚 arrival 💂‍♀️💷",
   },
   {
     A: new Date(2018, 5, 1),
     B: new Date(2019, 8, 1),
     color: colors.secondary,
-    title: "🧘‍♂️ name of the wind",
+    title: "  🧘‍♂️ name of the wind",
   },
   {
     A: new Date(2019, 8, 1),
     B: new Date(2022, 5, 1),
     color: colors.color4,
-    title: "🚶🪙  sweat",
+    title: "🚶sweat economy🤳",
   },
   {
     A: new Date(2022, 5, 1),
     B: new Date(),
     color: colors.tertiery,
-    title: "💍 Alien fiancé/🐫 Exodus",
+    title: "  💍 Alien fiancé 🐫 Exodus",
   },
 ];
 

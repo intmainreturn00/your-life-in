@@ -1,4 +1,4 @@
-import { Interval, Point, Scale, Size, UnitInterval } from "./LifeCard";
+import { DrawStyle, Interval, Point, Scale, Size, UnitInterval } from "./LifeCard";
 import { startOfTheYear, weeks, months, years } from "./timeUtils";
 
 export type Board = {
@@ -16,7 +16,13 @@ export type Board = {
   animPct: (pct: number, i: number) => number;
 };
 
-export const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scale, canvasSizePx: Size) => {
+export const calculateBoard = (
+  startDate: Date,
+  yearsToShow: number,
+  scale: Scale,
+  canvasSizePx: Size,
+  drawStyle: DrawStyle
+) => {
   const row = scale === "YEARS" ? 10 : scale === "MONTHS" ? 12 : 52;
   const column = scale === "YEARS" ? yearsToShow / 10 : yearsToShow;
   const unitSize: Size = {
@@ -41,9 +47,13 @@ export const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scal
     return newSize;
   };
   const unitCenter = (unitNumber: number) => {
+    const noise = drawStyle === "FUNKY" ? Math.random() * (unitSize.dy / 20 + unitSize.dy / 20) - unitSize.dy / 20 : 0;
     const y = Math.floor(unitNumber / row);
     const x = unitNumber - y * row;
-    const center: Point = { x: x * unitSize.dx + unitSize.dx / 2, y: y * unitSize.dy + unitSize.dy / 2 };
+    const center: Point = {
+      x: x * unitSize.dx + unitSize.dx / 2 + noise,
+      y: y * unitSize.dy + unitSize.dy / 2 + noise,
+    };
     return center;
   };
   const intervalToUnits = (intervals: Array<Interval>) => {
@@ -65,7 +75,7 @@ export const calculateBoard = (startDate: Date, yearsToShow: number, scale: Scal
     // const anim = Math.max(0.9, 1.2 * Math.sin(i / 300));
     // const anim = Math.max(0.8, 1.5 * Math.sin(i / 190));
     //return board.scaledSize(unitSize, anim, anim);
-    return board.scaledSize(unitSize, 0.8, 0.8);
+    return board.scaledSize(unitSize, 0.9, 0.9);
   };
   const animPct = (pct: number, i: number) => {
     //return 0.9 * pct * Math.abs(Math.sin(i / 500));

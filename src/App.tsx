@@ -10,8 +10,6 @@ import { useWindowSize } from "./useWindowSize";
 import colors from "./colors";
 
 export default function App() {
-  const target = useRef(null);
-
   useEffect(() => {
     // enabling proper pinch to zoom
     const handler = (e: Event) => {
@@ -60,25 +58,23 @@ export default function App() {
   );
 
   const startDate = datasets.myBirthday;
-  const [yearsToShow, setYearsToShow] = useState<number>(90);
+  const [yearsToShow, setYearsToShow] = useState<number>(100);
   const [scale, setScale] = useState<Scale>("YEARS");
   const windowSize = useWindowSize();
   const getCanvasSize = () => {
     document.documentElement.style.setProperty("--doc-height", `${window.innerHeight}px`);
     if (isMobile()) {
-      const xEdge = 0.7 * Math.min(windowSize.dx, windowSize.dy);
       if (scale === "YEARS") {
-        return { dx: xEdge, dy: xEdge };
+        return { dx: 0.7 * Math.min(windowSize.dx, windowSize.dy), dy: 0.7 * Math.min(windowSize.dx, windowSize.dy) };
       } else {
         return { dx: windowSize.dx * 0.9, dy: windowSize.dy * 0.9 };
       }
     } else {
-      const xEdge = 0.4 * Math.min(windowSize.dx, windowSize.dy);
-      const xEdge2 = 0.8 * Math.min(windowSize.dx, windowSize.dy);
       if (scale === "YEARS") {
+        const xEdge = 0.4 * Math.min(windowSize.dx, windowSize.dy);
         return { dx: xEdge, dy: xEdge };
       } else {
-        return { dx: xEdge2, dy: xEdge2 };
+        return { dx: Math.min(windowSize.dx, windowSize.dy) * 0.8, dy: windowSize.dy * 0.9 };
       }
     }
   };
@@ -92,10 +88,10 @@ export default function App() {
   };
 
   const handleYearsToShowChange = () => {
-    if (yearsToShow === 90) {
-      setYearsToShow(60);
+    if (yearsToShow === 100) {
+      setYearsToShow(50);
     } else {
-      setYearsToShow(90);
+      setYearsToShow(100);
     }
   };
   return (
@@ -114,7 +110,7 @@ export default function App() {
           />
         </LifeContainer>
       </animated.div>
-      <Title canvasSize={getCanvasSize()} drawStyle={drawStyle}>
+      <Title /*hide={scale !== "YEARS" && isMobile()}*/ hide={false} canvasSize={getCanvasSize()} drawStyle={drawStyle}>
         A
         <ScaleButton isActive={true} isMobile={isMobile()} onClick={handleYearsToShowChange}>
           {yearsToShow}
@@ -146,12 +142,11 @@ const Container = styled.div<{ isMobile: boolean }>`
   background-color: ${colors.background};
 `;
 
-const Title = styled.text<{ canvasSize: Size; drawStyle: DrawStyle }>`
+const Title = styled.text<{ canvasSize: Size; drawStyle: DrawStyle; hide: boolean }>`
   ${noselect}
-  /* font-family: ${(props) =>
-    props.drawStyle === "FUNKY" ? `'Sedgwick Ave Display', cursive;` : `'Nova Oval', cursive;`}; */
+  font-family: 'Nova Oval', cursive;
   font-weight: bold;
-  font-size: large;
+  /* font-size: large; */
   /* font-size: ${(props) => (props.drawStyle === "FUNKY" ? "larger" : "large")}; */
   position: absolute;
   bottom: 48px;
@@ -160,6 +155,7 @@ const Title = styled.text<{ canvasSize: Size; drawStyle: DrawStyle }>`
   cursor: pointer;
   color: ${colors.p};
   text-align: center;
+  visibility: ${(props) => (props.hide ? "hidden" : "")};
 `;
 
 const ScaleButton = styled.text<{ isMobile: boolean; isActive: boolean }>`
@@ -186,6 +182,12 @@ const LifeContainer = styled.div`
   align-items: center; */
   /* margin-top: 24px; */
   /* background-color: ${colors.button}; */
+  padding: 8px;
+  border-radius: 4px;
+  /* 
+  box-shadow: inset -5px -5px 10px 0px rgba(255, 255, 255, 0.5), inset 5px 5px 10px 0px rgba(0, 0, 0, 0.3); */
+  /* padding-left: 8px; */
+  /* padding-right: 8px; */
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
     rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 `;

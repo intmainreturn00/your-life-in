@@ -46,16 +46,21 @@ export class NormalDraw {
     ctx.strokeStyle = strokeColor;
     // ctx.lineWidth = 1;
     ctx.lineWidth = 0.1;
-    const size = board.scaledSize(board.unitSize, 1, 1);
-    for (let unit = 0; unit < board.row + 1; ++unit) {
-      ctx.moveTo(size.dx * unit, 0);
-      ctx.lineTo(size.dx * unit, size.dy * board.column);
+    const size = board.scaledSize(board.unitSize, 0.9, 0.9);
+    for (let unit = 0; unit < board.row * board.column; ++unit) {
+      const center = board.unitCenter(unit);
+      ctx.strokeRect(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy);
     }
-    for (let unit = 0; unit < board.column + 1; ++unit) {
-      ctx.moveTo(0, size.dy * unit);
-      ctx.lineTo(size.dx * board.row, size.dy * unit);
-    }
-    ctx.stroke();
+    // const size = board.scaledSize(board.unitSize, 1, 1);
+    // for (let unit = 0; unit < board.row + 1; ++unit) {
+    //   ctx.moveTo(size.dx * unit, 0);
+    //   ctx.lineTo(size.dx * unit, size.dy * board.column);
+    // }
+    // for (let unit = 0; unit < board.column + 1; ++unit) {
+    //   ctx.moveTo(0, size.dy * unit);
+    //   ctx.lineTo(size.dx * board.row, size.dy * unit);
+    // }
+    // ctx.stroke();
   }
   fillUnit(
     canvas: HTMLCanvas,
@@ -69,7 +74,7 @@ export class NormalDraw {
   ) {
     ctx.fillStyle = color;
     const center = board.unitCenter(unit);
-    const size = board.scaledSize(board.unitSize, 1, 1);
+    const size = board.scaledSize(board.unitSize, board.scale === "YEARS" ? 0.8 : 1, board.scale === "YEARS" ? 0.8 : 1);
     const nowUnit = board.dateToUnit(new Date());
     const animSize = board.animSize(i);
     if (unit === nowUnit) {
@@ -100,9 +105,10 @@ export class NormalDraw {
     }
 
     ctx.lineWidth = board.scale === "YEARS" ? 0.5 : 0.9;
-    const size = board.scaledSize(board.unitSize, 1, 1);
+    const size = board.scaledSize(board.unitSize, 0.9, 0.9);
     ctx.font = `${size.dy / 2}px Nova Oval italic`;
     ctx.textBaseline = "middle";
+
     if (board.scale === "YEARS") {
       let unit = interval.A;
       for (let c of interval.title) {
@@ -122,13 +128,14 @@ export class NormalDraw {
         const center = board.unitCenter(interval.A);
         ctx.fillStyle = colors.stroke;
         ctx.strokeStyle = colors.stroke;
-        ctx.strokeText(interval.title, center.x, center.y);
+        const maxWidth = board.row * size.dx - center.x - size.dx / 3;
+        ctx.strokeText(interval.title, center.x - size.dx / 3, center.y + size.dy / 2, maxWidth);
       } else {
-        const line = Math.ceil(interval.A / board.row + 1) * board.row;
+        const line = Math.ceil(interval.A / board.row) * board.row;
         const center = board.unitCenter(line);
         ctx.fillStyle = colors.stroke;
         ctx.strokeStyle = colors.stroke;
-        ctx.strokeText(interval.title, center.x - size.dx / 3, center.y);
+        ctx.strokeText(interval.title, center.x - size.dx / 3, center.y + size.dy);
       }
     }
   }
@@ -249,14 +256,15 @@ export class RoughDraw {
   }
   drawGrid(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, strokeColor: string) {
     const rc: RoughCanvas = rough.canvas(canvas, this.config);
-    // const size = board.scaledSize(board.unitSize, 1, 1);
-    // for (let unit = 0; unit < board.row; ++unit) {
-    //   rc.draw(rc.line(size.dx * unit, 0, size.dx * unit, size.dy * board.column));
-    // }
-    // for (let unit = 0; unit < board.column + 1; ++unit) {
-    //   rc.draw(rc.line(0, size.dy * unit, size.dx * board.row, size.dy * unit));
-    // }
-    this.grid.forEach((dr) => rc.draw(dr));
+    if (board.scale === "YEARS") {
+      const size = board.scaledSize(board.unitSize, 0.9, 0.9);
+      for (let unit = 0; unit < board.row * board.column; ++unit) {
+        const center = board.unitCenter(unit);
+        rc.draw(rc.generator.rectangle(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy));
+      }
+    } else {
+      this.grid.forEach((dr) => rc.draw(dr));
+    }
   }
   fillUnit(
     canvas: HTMLCanvas,
@@ -284,7 +292,6 @@ export class RoughDraw {
             fillWeight: board.scale === "YEARS" ? 2 : 1,
             fillStyle: "solid",
             hachureAngle: -45,
-            strokeWidth: board.scale === "YEARS" ? 2 : 0.5,
           }
         )
       );
@@ -326,7 +333,7 @@ export class RoughDraw {
         fillWeight: board.scale === "YEARS" ? 4 : 1,
         fillStyle: "zigzag",
         hachureAngle: -45,
-        strokeWidth: board.scale === "YEARS" ? 0.9 : 0.5,
+        strokeWidth: board.scale === "YEARS" ? 0.3 : 0.5,
       });
       this.intervalsDrawables.set(interval, drawable);
       rc.draw(drawable);
@@ -338,7 +345,6 @@ export class RoughDraw {
     const size = board.scaledSize(board.unitSize, 1, 1);
     if (nowUnit > interval.A && nowUnit <= interval.B) {
       ctx.fillStyle = colors.background;
-      ctx.fillRect(centerNow.x - size.dx / 2, centerNow.y - size.dy / 2, size.dx, size.dy);
       this.fillUnit(canvas, ctx, board, nowUnit, interval.color, 0, board.animPct(interval.to, i), i);
     }
 
@@ -354,24 +360,24 @@ export class RoughDraw {
         if (unit > interval.B) {
           return;
         }
-        ctx.strokeRect(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy);
       }
     } else {
       ctx.fillStyle = colors.stroke;
       const rowNum = Math.abs(Math.ceil(interval.B / board.row) - Math.ceil(interval.A / board.row));
-      const fontSize = Math.min(Math.max(rowNum * size.dx, 34), 20);
+      const fontSize = 20; //Math.min(Math.max(rowNum * size.dx, 34), 20);
       ctx.font = `${fontSize}px Sedgwick Ave Display`;
       if (rowNum < 3) {
         const center = board.unitCenter(interval.A);
         ctx.fillStyle = colors.stroke;
         ctx.strokeStyle = colors.stroke;
-        ctx.strokeText(interval.title, center.x, center.y);
+        const maxWidth = board.row * size.dx - center.x - size.dx / 3;
+        ctx.strokeText(interval.title, center.x - size.dx / 3, center.y + size.dy / 2, maxWidth);
       } else {
-        const line = Math.ceil(interval.A / board.row + 1) * board.row;
+        const line = Math.ceil(interval.A / board.row) * board.row;
         const center = board.unitCenter(line);
         ctx.fillStyle = colors.stroke;
         ctx.strokeStyle = colors.stroke;
-        ctx.strokeText(interval.title, center.x - size.dx / 3, center.y);
+        ctx.strokeText(interval.title, center.x - size.dx / 3, center.y + size.dy);
       }
     }
   }
