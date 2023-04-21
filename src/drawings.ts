@@ -26,7 +26,7 @@ export interface Draw {
 }
 export class NormalDraw {
   initCanvas(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, canvasSizePx: Size, strokeColor: string) {
-    const lineWidth = board.scale === "YEARS" ? 1.5 : 0.3;
+    const lineWidth = board.scale === "YEARS" ? 1.5 : 0.2;
     retinaCanvasScaling(canvas, ctx, canvasSizePx);
     ctx.lineWidth = lineWidth;
   }
@@ -44,6 +44,8 @@ export class NormalDraw {
   }
   drawGrid(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, strokeColor: string) {
     ctx.strokeStyle = strokeColor;
+    // ctx.lineWidth = 1;
+    ctx.lineWidth = 0.1;
     const size = board.scaledSize(board.unitSize, 1, 1);
     for (let unit = 0; unit < board.row + 1; ++unit) {
       ctx.moveTo(size.dx * unit, 0);
@@ -82,6 +84,7 @@ export class NormalDraw {
     }
   }
   drawInterval(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, interval: UnitInterval, i: number) {
+    ctx.lineWidth = board.scale === "YEARS" ? 0.5 : 0.1;
     for (let unit = interval.A; unit <= interval.B; ++unit) {
       this.fillUnit(
         canvas,
@@ -93,6 +96,40 @@ export class NormalDraw {
         unit === interval.B ? interval.to : 1,
         i
       );
+      this.strokeUnit(canvas, ctx, board, unit, colors.stroke, i);
+    }
+
+    ctx.lineWidth = board.scale === "YEARS" ? 0.5 : 0.9;
+    const size = board.scaledSize(board.unitSize, 1, 1);
+    ctx.font = `${size.dy / 2}px Nova Oval italic`;
+    ctx.textBaseline = "middle";
+    if (board.scale === "YEARS") {
+      let unit = interval.A;
+      for (let c of interval.title) {
+        const center = board.unitCenter(unit);
+        ctx.strokeText(c, center.x - size.dx / 3, center.y);
+        ++unit;
+        if (unit > interval.B) {
+          return;
+        }
+      }
+    } else {
+      ctx.fillStyle = colors.stroke;
+      const rowNum = Math.abs(Math.ceil(interval.B / board.row) - Math.ceil(interval.A / board.row));
+      const fontSize = Math.min(Math.max(rowNum * size.dx, 24), 14);
+      ctx.font = `${fontSize}px Nova Oval`;
+      if (rowNum < 3) {
+        const center = board.unitCenter(interval.A);
+        ctx.fillStyle = colors.stroke;
+        ctx.strokeStyle = colors.stroke;
+        ctx.strokeText(interval.title, center.x, center.y);
+      } else {
+        const line = Math.ceil(interval.A / board.row + 1) * board.row;
+        const center = board.unitCenter(line);
+        ctx.fillStyle = colors.stroke;
+        ctx.strokeStyle = colors.stroke;
+        ctx.strokeText(interval.title, center.x - size.dx / 3, center.y);
+      }
     }
   }
 }
@@ -180,7 +217,7 @@ export class RoughDraw {
   intervalsDrawables: Map<UnitInterval, Drawable> = new Map();
 
   initCanvas(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, canvasSizePx: Size, strokeColor: string) {
-    const lineWidth = board.scale === "YEARS" ? 1 : 0.2;
+    const lineWidth = board.scale === "YEARS" ? 0.2 : 0.1;
     retinaCanvasScaling(canvas, ctx, canvasSizePx);
     ctx.lineWidth = lineWidth;
     this.config = {
@@ -289,7 +326,7 @@ export class RoughDraw {
         fillWeight: board.scale === "YEARS" ? 4 : 1,
         fillStyle: "zigzag",
         hachureAngle: -45,
-        strokeWidth: board.scale === "YEARS" ? 2 : 0.5,
+        strokeWidth: board.scale === "YEARS" ? 0.9 : 0.5,
       });
       this.intervalsDrawables.set(interval, drawable);
       rc.draw(drawable);
@@ -303,6 +340,39 @@ export class RoughDraw {
       ctx.fillStyle = colors.background;
       ctx.fillRect(centerNow.x - size.dx / 2, centerNow.y - size.dy / 2, size.dx, size.dy);
       this.fillUnit(canvas, ctx, board, nowUnit, interval.color, 0, board.animPct(interval.to, i), i);
+    }
+
+    ctx.lineWidth = board.scale === "YEARS" ? 0.5 : 0.9;
+    ctx.font = `${size.dy / 2}px Sedgwick Ave Display`;
+    ctx.textBaseline = "middle";
+    if (board.scale === "YEARS") {
+      let unit = interval.A;
+      for (let c of interval.title) {
+        const center = board.unitCenter(unit);
+        ctx.strokeText(c, center.x - size.dx / 3, center.y);
+        ++unit;
+        if (unit > interval.B) {
+          return;
+        }
+        ctx.strokeRect(center.x - size.dx / 2, center.y - size.dy / 2, size.dx, size.dy);
+      }
+    } else {
+      ctx.fillStyle = colors.stroke;
+      const rowNum = Math.abs(Math.ceil(interval.B / board.row) - Math.ceil(interval.A / board.row));
+      const fontSize = Math.min(Math.max(rowNum * size.dx, 34), 20);
+      ctx.font = `${fontSize}px Sedgwick Ave Display`;
+      if (rowNum < 3) {
+        const center = board.unitCenter(interval.A);
+        ctx.fillStyle = colors.stroke;
+        ctx.strokeStyle = colors.stroke;
+        ctx.strokeText(interval.title, center.x, center.y);
+      } else {
+        const line = Math.ceil(interval.A / board.row + 1) * board.row;
+        const center = board.unitCenter(line);
+        ctx.fillStyle = colors.stroke;
+        ctx.strokeStyle = colors.stroke;
+        ctx.strokeText(interval.title, center.x - size.dx / 3, center.y);
+      }
     }
   }
 }

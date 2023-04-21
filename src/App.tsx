@@ -37,15 +37,13 @@ export default function App() {
         memo = [initialScale];
       }
 
-      if (s > 2.666) {
+      if (s > 2.466) {
         setScale("WEEKS");
-      } else if (s > 1.666) {
+      } else if (s > 1.466) {
         setScale("MONTHS");
       } else {
         setScale("YEARS");
       }
-
-      //
       if (active) {
         api.start({ scale: memo[0] * ms });
       } else {
@@ -54,8 +52,8 @@ export default function App() {
       return memo;
     },
     {
-      scaleBounds: { min: 1, max: 2.9 },
-      rubberband: true,
+      scaleBounds: { min: 1, max: 2.6 },
+      rubberband: false,
       pointer: { touch: true },
       eventOptions: { passive: false },
     }
@@ -67,20 +65,20 @@ export default function App() {
   const windowSize = useWindowSize();
   const getCanvasSize = () => {
     document.documentElement.style.setProperty("--doc-height", `${window.innerHeight}px`);
-    if (!isMobile()) {
+    if (isMobile()) {
+      const xEdge = 0.7 * Math.min(windowSize.dx, windowSize.dy);
+      if (scale === "YEARS") {
+        return { dx: xEdge, dy: xEdge };
+      } else {
+        return { dx: windowSize.dx * 0.9, dy: windowSize.dy * 0.9 };
+      }
+    } else {
       const xEdge = 0.4 * Math.min(windowSize.dx, windowSize.dy);
       const xEdge2 = 0.8 * Math.min(windowSize.dx, windowSize.dy);
       if (scale === "YEARS") {
         return { dx: xEdge, dy: xEdge };
       } else {
         return { dx: xEdge2, dy: xEdge2 };
-      }
-    } else {
-      const xEdge = 0.95 * Math.min(windowSize.dx, windowSize.dy);
-      if (scale === "YEARS") {
-        return { dx: xEdge, dy: xEdge };
-      } else {
-        return { dx: windowSize.dx, dy: windowSize.dy };
       }
     }
   };
@@ -150,12 +148,13 @@ const Container = styled.div<{ isMobile: boolean }>`
 
 const Title = styled.text<{ canvasSize: Size; drawStyle: DrawStyle }>`
   ${noselect}
-  font-family: ${(props) =>
-    props.drawStyle === "FUNKY" ? `'Sedgwick Ave Display', cursive;` : `'Nova Oval', cursive;`};
-  font-weight: bolder;
-  font-size: ${(props) => (props.drawStyle === "FUNKY" ? "larger" : "large")};
+  /* font-family: ${(props) =>
+    props.drawStyle === "FUNKY" ? `'Sedgwick Ave Display', cursive;` : `'Nova Oval', cursive;`}; */
+  font-weight: bold;
+  font-size: large;
+  /* font-size: ${(props) => (props.drawStyle === "FUNKY" ? "larger" : "large")}; */
   position: absolute;
-  bottom: 24px;
+  bottom: 48px;
   left: ${(props) => (window.innerWidth - props.canvasSize.dx) / 2};
   right: ${(props) => (window.innerWidth - props.canvasSize.dx) / 2};
   cursor: pointer;
@@ -185,7 +184,7 @@ const LifeContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center; */
-  margin-top: 24px;
+  /* margin-top: 24px; */
   /* background-color: ${colors.button}; */
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
     rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
