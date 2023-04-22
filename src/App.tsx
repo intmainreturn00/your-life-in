@@ -89,7 +89,7 @@ export default function App() {
 
   const handleYearsToShowChange = () => {
     if (yearsToShow === 100) {
-      setYearsToShow(50);
+      setYearsToShow(60);
     } else {
       setYearsToShow(100);
     }
@@ -102,7 +102,7 @@ export default function App() {
             startDate={startDate}
             yearsToShow={yearsToShow}
             scale={scale}
-            intervals={scale === "YEARS" ? datasets.authoring : datasets.authoring}
+            intervals={datasets.authoringWithoutEmoji}
             canvasSizePx={getCanvasSize()}
             strokeColor={colors.stroke}
             style={{}}
@@ -145,7 +145,17 @@ const Container = styled.div<{ isMobile: boolean }>`
 const Title = styled.text<{ canvasSize: Size; drawStyle: DrawStyle; hide: boolean }>`
   ${noselect}
   font-family: 'Nova Oval', cursive;
-  font-weight: bold;
+  font-family: ${(props) =>
+    props.drawStyle === "FUNKY" ? `'Sedgwick Ave Display', cursive;` : `'Nova Oval', cursive;`};
+  font-weight: bolder;
+  font-size: 20px;
+
+  color: ${colors.p};
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: ${colors.p};
+  /* color: ${colors.p}; */
+
   /* font-size: large; */
   /* font-size: ${(props) => (props.drawStyle === "FUNKY" ? "larger" : "large")}; */
   position: absolute;
@@ -153,7 +163,6 @@ const Title = styled.text<{ canvasSize: Size; drawStyle: DrawStyle; hide: boolea
   left: ${(props) => (window.innerWidth - props.canvasSize.dx) / 2};
   right: ${(props) => (window.innerWidth - props.canvasSize.dx) / 2};
   cursor: pointer;
-  color: ${colors.p};
   text-align: center;
   visibility: ${(props) => (props.hide ? "hidden" : "")};
 `;
@@ -161,7 +170,10 @@ const Title = styled.text<{ canvasSize: Size; drawStyle: DrawStyle; hide: boolea
 const ScaleButton = styled.text<{ isMobile: boolean; isActive: boolean }>`
   /* font-weight: bolder; */
   /* font-size: larger; */
-  padding: 2px;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: 3px;
+  /* padding-top: -30px; */
   color: ${colors.buttonText};
   background: ${(props) => (props.isActive ? colors.button : "transparent")};
   &:hover {

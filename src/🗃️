@@ -1,0 +1,164 @@
+// 🗃️
+
+// const size = board.scaledSize(board.unitSize, 1, 1);
+// for (let unit = 0; unit < board.row + 1; ++unit) {
+//   ctx.moveTo(size.dx * unit, 0);
+//   ctx.lineTo(size.dx * unit, size.dy * board.column);
+// }
+// for (let unit = 0; unit < board.column + 1; ++unit) {
+//   ctx.moveTo(0, size.dy * unit);
+//   ctx.lineTo(size.dx * board.row, size.dy * unit);
+// }
+// ctx.stroke();
+
+// export class DiamondDraw {
+// initCanvas(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, canvasSizePx: Size, strokeColor: string) {
+//     const lineWidth = board.scale === "YEARS" ? 1.5 : 0.3;
+//     retinaCanvasScaling(canvas, ctx, canvasSizePx);
+//     ctx.lineWidth = lineWidth;
+// }
+// strokeUnit(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, unit: number, color: string) {
+//     ctx.strokeStyle = color;
+//     const center = board.unitCenter(unit);
+//     const size = board.scaledSize(board.unitSize, 0.9, 0.9);
+//     const path = [
+//     [center.x - size.dx / 2, center.y],
+//     [center.x, center.y - size.dy / 2],
+//     [center.x + size.dx / 2, center.y],
+//     [center.x, center.y + size.dy / 2],
+//     ];
+//     ctx.beginPath();
+//     ctx.moveTo(path[0][0], path[0][1]);
+//     path.forEach((value) => {
+//     ctx.lineTo(value[0], value[1]);
+//     });
+//     ctx.closePath();
+//     ctx.stroke();
+// }
+// fillUnit(
+//     canvas: HTMLCanvas,
+//     ctx: CanvasContext,
+//     board: Board,
+//     unit: number,
+//     color: string,
+//     from: number,
+//     to: number
+// ) {
+//     ctx.fillStyle = color;
+//     const center = board.unitCenter(unit);
+//     const size = board.scaledSize(board.unitSize, 0.9, 0.9);
+//     const startX = center.x - size.dx / 2 + from * size.dx;
+//     const endX = center.x - size.dx / 2 + to * size.dx;
+//     const startYTop = from < 0.5 ? center.y - from * size.dy : center.y - size.dy / 2 + (from - 0.5) * size.dy;
+//     const startYBottom = from < 0.5 ? center.y + from * size.dy : center.y + size.dy / 2 - (from - 0.5) * size.dy;
+//     const endYTop = to < 0.5 ? center.y - to * size.dy : center.y - size.dy / 2 + (to - 0.5) * size.dy;
+//     const endYBottom = to < 0.5 ? center.y + to * size.dy : center.y + size.dy / 2 - (to - 0.5) * size.dy;
+
+//     const path = [];
+//     path.push([startX, startYTop]);
+//     if (from < 0.5 && to > 0.5) {
+//     path.push([center.x, center.y - size.dy / 2]);
+//     }
+//     path.push([endX, endYTop]);
+//     path.push([endX, endYBottom]);
+//     if (from < 0.5 && to > 0.5) {
+//     path.push([center.x, center.y + size.dy / 2]);
+//     }
+//     path.push([startX, startYBottom]);
+
+//     ctx.beginPath();
+//     ctx.moveTo(path[0][0], path[0][1]);
+//     path.forEach((value) => {
+//     ctx.lineTo(value[0], value[1]);
+//     });
+//     ctx.fill();
+// }
+// drawInterval(canvas: HTMLCanvas, ctx: CanvasContext, board: Board, interval: UnitInterval) {
+//     for (let unit = interval.A; unit <= interval.B; ++unit) {
+//     this.fillUnit(
+//         canvas,
+//         ctx,
+//         board,
+//         unit,
+//         interval.color,
+//         unit === interval.A ? interval.from : 0,
+//         unit === interval.B ? interval.to : 1
+//     );
+//     }
+// }
+// }
+
+// const authoring: Array<Interval> = [
+//     {
+//       A: new Date(1991, 11, 17),
+//       B: new Date(2010, 8, 1),
+//       color: colors.color5,
+//       title: "👨🏼‍🌾🐂🐑🛖🏍️👨‍👩‍👦📻",
+//     },
+//     {
+//       A: new Date(1995, 11, 17),
+//       B: new Date(2010, 8, 1),
+//       color: colors.color3,
+//       title: "siberia 👾🦮🎥📚💾⛸️❄️",
+//     },
+//     {
+//       A: new Date(2007, 8, 1),
+//       B: new Date(2010, 8, 1),
+//       color: colors.color4,
+//       title: "👨‍🏫🏫📖 new school 🛤️🚞🏆",
+//     },
+//     {
+//       A: new Date(2010, 6, 1),
+//       B: new Date(2010, 6, 2),
+//       color: "transparent",
+//       title: "♟️",
+//     },
+//     {
+//       A: new Date(2010, 8, 2),
+//       B: new Date(2015, 2, 1),
+//       color: colors.color4,
+//       title: "👨‍🏫📚📓📖university 🗻",
+//     },
+//     {
+//       A: new Date(2013, 6, 1),
+//       B: new Date(2015, 2, 1),
+//       color: colors.color1,
+//       title: "👔💼📑 emc lab",
+//     },
+//     {
+//       A: new Date(2013, 8, 1),
+//       B: new Date(2013, 8, 2),
+//       color: "transparent",
+//       title: "🏆🗃️📑🎓",
+//     },
+//     {
+//       A: new Date(2015, 2, 1),
+//       B: new Date(2016, 5, 1),
+//       color: colors.secondary,
+//       title: "privateering🩼🧘‍♂️🏴‍☠️💻📱",
+//     },
+//     {
+//       A: new Date(2016, 5, 1),
+//       B: new Date(2018, 5, 1),
+//       color: colors.color4,
+//       title: "arrival 🚛💂‍♀️💷🚀",
+//     },
+//     {
+//       A: new Date(2018, 5, 1),
+//       B: new Date(2019, 8, 1),
+//       color: colors.secondary,
+//       title: "name of the wind💃🧘🤸‍♂️",
+//     },
+//     {
+//       A: new Date(2019, 8, 1),
+//       B: new Date(2022, 5, 1),
+//       color: colors.color4,
+//       title: "sweat economy🚶🚴‍♂️📠🤳🪙",
+//     },
+//     {
+//       A: new Date(2022, 2, 1),
+//       B: new Date(),
+//       color: colors.pinkactive,
+//       title: "🏃🚀💥💥📜 alien fiancé 🐫 Exodus",
+//     },
+//   ];

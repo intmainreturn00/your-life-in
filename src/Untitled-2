@@ -1,0 +1,200 @@
+/*
+countries, all, male, female
+Japan, 84.62, 81.64, 87.74
+Singapore, 83.74, 81.50, 86.10
+South Korea 83.43, 80.50, 86.50
+Norway, 83.21, 81.60, 84.90
+Australia, 83.20, 81.20, 85.30
+Switzerland, 83.10, 81.10, 85.20
+Iceland, 83.07, 81.70, 84.50
+Israel, 82.70, 80.70, 84.80
+Malta, 82.65, 80.80, 84.60
+Sweden, 82.41, 80.70, 84.20
+Italy, 82.34, 80.10, 84.70
+Spain, 82.33, 79.70, 85.10
+French Polynesia 82.22, 79.32, 85.83
+Ireland, 82.20, 80.40, 84.10
+France, 82.18, 79.20, 85.30
+Finland, 82.13, 79.40, 85.00
+New Zealand 82.06, 80.30, 83.90
+Bermuda, 82.06, 78.30, 86.00
+Liechtenstein, 81.81, 80.10, 83.60
+Canada, 81.75, 79.70, 83.90
+Luxembourg, 81.74, 79.40, 84.20
+Denmark, 81.55, 79.60, 83.60
+Netherlands, 81.41, 79.80, 83.10
+Cyprus, 81.39, 79.34, 83.45
+Channel Islands 81.26, 79.14, 83.39
+Austria, 81.19, 78.90, 83.60
+Greece, 81.09, 78.60, 83.70
+Portugal, 80.98, 78.00, 84.10
+Germany, 80.94, 78.60, 83.40
+United Kingdom 80.90, 79.00, 82.90
+New Caledonia 80.83, 77.25, 84.60
+Belgium, 80.80, 78.60, 83.10
+Slovenia, 80.53, 77.80, 83.40
+Maldives, 79.88, 78.85, 81.27
+Chile, 79.38, 76.75, 82.04
+Costa, Rica 79,.28, 76.75
+Thailand, 79.27, 74.95, 83.70
+Bahrain, 79.17, 78.17, 80.43
+Qatar, 79.10, 78.22, 80.68
+United, Arab Emirates, 78.95, 77.46
+Antigua, and Barbuda, 78.84, 76.06
+Uruguay, 78.43, 74.69, 81.91
+Estonia, 78.35, 74.20, 82.70
+Czechia, 78.23, 75.30, 81.30
+China, 78.08, 75.31, 81.06
+Puerto, Rico 78,.04, 73.64
+Lebanon, 77.80, 75.64, 79.89
+Croatia, 77.72, 74.70, 80.90
+Cuba, 77.57, 75.04, 80.22
+Barbados, 77.39, 75.42, 79.21
+USA, 77.28, 74.50, 80.20
+Seychelles, 77.24, 72.70, 82.00
+Albania, 76.99, 74.63, 79.68
+Kuwait, 76.92, 75.35, 80.02
+Slovakia, 76.87, 73.50, 80.40
+Panama, 76.66, 73.47, 80.03
+Guam, 76.61, 72.20, 81.87
+Poland, 76.60, 72.60, 80.80
+Sri Lanka 76.39, 72.60, 80.11
+Saudi Arabia 76.24, 74.97, 77.99
+Bosnia and Herzegovina 76,.22, 74.04
+Malaysia, 75.94, 73.65, 78.47
+Montenegro, 75.93, 73.20, 78.80
+Argentina, 75.89, 72.55, 79.28
+Turkey, 75.85, 72.77, 79.06
+Aruba, 75.72, 72.83, 78.44
+North Macedonia 75.69, 73.62, 77.87
+Hungary, 75.62, 72.30, 79.10
+Latvia, 75.39, 70.90, 80.10
+Vietnam, 75.38, 70.79, 79.92
+Tunisia, 75.29, 71.84, 79.28
+Jordan, 75.18, 72.99, 77.77
+Lithuania, 74.93, 70.10, 80.00
+Grenada, 74.92, 72.21, 77.87
+Iran, 74.83, 72.10, 77.82
+Cabo, Verde 74,.81, 70.33
+Brunei, 74.80, 72.75, 77.03
+Colombia, 74.77, 71.54, 78.14
+Oman, 74.76, 73.29, 76.79
+Algeria, 74.45, 73.08, 75.91
+Trinidad and Tobago 74,.41, 70.98
+Palestine, 74.40, 72.16, 76.68
+Romania, 74.35, 70.50, 78.40
+Serbia, 74.23, 71.40, 77.20
+Belarus, 74.23, 69.30, 79.40
+Mauritius, 74.18, 70.86, 77.66
+Brazil, 74.01, 70.70, 77.38
+Morocco, 73.92, 71.76, 76.31
+Peru, 73.67, 70.81, 76.82
+Bulgaria, 73.61, 69.90, 77.50
+St. Lucia 73,.42, 70.04
+North Korea 73.27, 70.79, 75.72
+Paraguay, 73.18, 70.40, 76.16
+Dominican Republic 72.89, 69.36, 76.91
+Belize, 72.85, 69.56, 76.63
+Samoa, 72.77, 70.34, 75.46
+Georgia, 72.77, 67.74, 77.87
+Bahamas, 72.68, 69.10, 76.27
+Caribbean, small states, 72.57, 69.78
+Suriname, 72.56, 69.26, 75.98
+Libya, 72.47, 69.87, 75.35
+World, 72.27, 69.82, 74.88
+Armenia, 72.17, 67.05, 77.00
+Ecuador, 72.15, 68.77, 76.06
+Mongolia, 72.14, 67.50, 77.02
+Syria, 72.14, 68.89, 75.56
+St. Vincent and, the Grenadines, 72.13
+Philippines, 72.12, 70.24, 74.00
+Bangladesh, 71.97, 70.19, 73.96
+Jamaica, 71.87, 69.82, 73.92
+Kyrgyzstan, 71.80, 67.80, 76.00
+Guatemala, 71.80, 68.26, 75.55
+Nicaragua, 71.80, 68.65, 75.01
+Bhutan, 71.61, 69.97, 73.54
+Honduras, 71.46, 69.13, 73.99
+Greenland, 71.40, 69.59, 73.31
+Kazakhstan, 71.37, 67.09, 75.53
+Russia, 71.34, 66.49, 76.43
+Ukraine, 71.19, 66.39, 76.22
+Venezuela, 71.09, 66.74, 75.81
+El Salvador 71.06, 66.43, 75.41
+Egypt, 70.99, 68.67, 73.39
+Tonga, 70.93, 68.34, 73.70
+Micronesia, 70.67, 67.11, 74.54
+Cambodia, 70.42, 68.00, 72.72
+Uzbekistan, 70.33, 67.88, 72.79
+Vanuatu, 70.30, 68.55, 72.43
+Solomon Islands 70.20, 68.79, 71.80
+Moldova, 70.17, 65.69, 74.85
+India, 70.15, 68.61, 71.82
+Mexico, 70.13, 66.33, 74.31
+Pacific island small states, 69.47, 67.63
+Nepal, 69.25, 67.34, 71.17
+Iraq, 69.12, 66.95, 71.19
+Indonesia, 68.81, 66.75, 70.98
+Turkmenistan, 68.69, 65.39, 71.98
+Laos, 68.50, 66.52, 70.59
+Guyana, 68.49, 65.08, 72.12
+Timor-Leste 68.47, 66.84, 70.28
+Senegal, 68.01, 65.59, 70.27
+Tajikistan, 67.99, 66.00, 70.17
+Fiji, 67.92, 66.17, 69.74
+Sao Tome and Principe, 67.78, 65.16
+Kiribati, 67.27, 65.35, 68.95
+Eritrea, 67.13, 64.86, 69.34
+Azerbaijan, 66.87, 62.99, 71.00
+Myanmar, 66.80, 63.78, 69.96
+Rwanda, 66.77, 64.36, 69.00
+Gabon, 66.53, 64.26, 69.12
+Tanzania, 66.41, 64.37, 68.54
+Pakistan, 66.27, 63.95, 68.83
+Papua New Guinea 65,.79, 63.40
+Botswana, 65.65, 63.14, 68.05
+Sudan, 65.61, 63.11, 68.21
+Ethiopia, 65.37, 62.52, 68.43
+South Africa 65.25, 62.18, 67.96
+Madagascar, 65.18, 62.89, 67.61
+Yemen, 64.65, 61.64, 67.89
+Mauritania, 64.53, 62.78, 66.33
+Bolivia, 64.47, 61.56, 67.84
+Comoros, 64.17, 61.98, 66.59
+Ghana, 64.11, 61.90, 66.39
+Haiti, 64.05, 61.13, 67.12
+Congo,, Rep., 63.78, 62.21
+Malawi, 63.72, 60.01, 67.60
+Uganda, 62.85, 60.72, 64.90
+Namibia, 62.83, 59.06, 66.61
+Djibouti, 62.69, 60.07, 65.46
+Kenya, 62.67, 60.37, 65.06
+Gambia, 62.61, 61.02, 64.23
+Afghanistan, 62.58, 59.87, 65.43
+Zambia, 62.38, 59.64, 65.04
+Angola, 62.26, 59.58, 64.98
+Burundi, 61.57, 59.47, 63.67
+Niger, 61.45, 60.47, 62.45
+Mozambique, 61.17, 58.11, 64.16
+Zimbabwe, 61.12, 58.13, 63.86
+Togo, 61.03, 60.49, 61.58
+Liberia, 60.95, 59.53, 62.35
+Cameroon, 60.83, 59.08, 62.63
+Equatorial Guinea 60.71, 58.81, 62.94
+Benin, 60.09, 58.69, 61.48
+Guinea-Bissau 60.00, 57.61, 62.27
+Sierra Leone 59.76, 58.40, 61.12
+DR Congo 59.74, 57.82, 61.70
+Burkina Faso 59.73, 57.79, 61.60
+Eswatini, 59.69, 56.03, 63.68
+Guinea, 59.33, 58.11, 60.45
+Cote d'Ivoire 59,.03, 57.86
+Mali, 58.63, 57.38, 59.94
+Somalia, 55.97, 53.97, 58.05
+South Sudan 55.48, 53.91, 57.00
+Lesotho, 54.69, 51.96, 57.54
+Central African Republic 54,.60, 52.58
+Nigeria, 52.89, 52.46, 53.32
+Chad, 52.78, 51.22, 54.40
+
+*/

@@ -75,7 +75,7 @@ export const calculateBoard = (
     // const anim = Math.max(0.9, 1.2 * Math.sin(i / 300));
     // const anim = Math.max(0.8, 1.5 * Math.sin(i / 190));
     //return board.scaledSize(unitSize, anim, anim);
-    return board.scaledSize(unitSize, 0.9, 0.9);
+    return board.scaledSize(unitSize, 1, 1);
   };
   const animPct = (pct: number, i: number) => {
     //return 0.9 * pct * Math.abs(Math.sin(i / 500));
